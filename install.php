@@ -4,12 +4,6 @@
  *
  */
 if(array_key_exists('clientKey', $_POST)) {
-    echo 'Processing Installation';
-    echo "<pre>";
-    print_r($_POST);
-    echo "</pre>";
-
-
     //Get Zip
     $isSDK = 'https://github.com/infusionsoft/infusionsoft-php/archive/master.zip';
     $fh = fopen('master.zip', 'w');
@@ -31,12 +25,20 @@ if(array_key_exists('clientKey', $_POST)) {
             $zip->extractTo('.');
             $dir = trim($zip->getNameIndex(0), '/'); //Get Folder Name
             $zip->close();
-            echo 'Folder Name: ' . $dir . '<br>';
-            echo 'woot!';
+            // echo 'Folder Name: ' . $dir . '<br>';
+            // echo 'woot!';
         } else {
-            echo 'doh!';
+            // echo 'doh!';
         }
     }
+
+
+
+
+    //Install the Vendor files through composer.phar
+
+
+
 
     //Write the Infusionsoft Application settings to the config file
     $configWrite = fopen('app-config.php', 'w');
@@ -48,9 +50,6 @@ $infusionsoft = new \Infusionsoft\Infusionsoft(array(
 )); ?>';
     fwrite($configWrite, $data);
     fclose($configWrite);
-
-
-    exit;
 }
 
 
@@ -96,6 +95,16 @@ $infusionsoft = new \Infusionsoft\Infusionsoft(array(
     </style>
   </head>
   <body>
+      <?php
+      if(array_key_exists('clientKey', $_POST)) {
+          echo '<div class="container"><div class="row">';
+          echo '<h2>Installation complete</h2>';
+          echo '<p>Please find your installed SDK in the folder named ' . $dir . '. There is also a filed name app-config.php that has your application settings installed in the file and assigned to the $infusionsoft variable. This file can be stored above the web directory and included in script files when needing to access the API.</p>';
+          echo '</div></div>';
+
+          exit;
+      }
+      ?>
 
       <div class="container">
           <div class="row">

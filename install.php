@@ -32,14 +32,6 @@ if(array_key_exists('clientKey', $_POST)) {
         }
     }
 
-
-
-
-    //Install the Vendor files through composer.phar
-
-
-
-
     //Write the Infusionsoft Application settings to the config file
     $configWrite = fopen('app-config.php', 'w');
     $data = '<?php
@@ -50,6 +42,11 @@ $infusionsoft = new \Infusionsoft\Infusionsoft(array(
 )); ?>';
     fwrite($configWrite, $data);
     fclose($configWrite);
+
+    //Install the Vendor files through composer.phar
+    chdir("./" . $dir);
+    $phpDir = PHP_BINDIR . "/php";
+    exec("$phpDir ../composer.phar install", $out, $ret);
 }
 
 
@@ -78,9 +75,9 @@ $infusionsoft = new \Infusionsoft\Infusionsoft(array(
             display: flex;
             align-items: center;
             justify-content: center;
-            background: #283c86;  /* fallback for old browsers */
-            background: -webkit-linear-gradient(to right, #45a247, #283c86);  /* Chrome 10-25, Safari 5.1-6 */
-            background: linear-gradient(to right, #45a247, #283c86); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+            background: #000046;  /* fallback for old browsers */
+            background: -webkit-linear-gradient(to bottom, #1CB5E0, #000046);  /* Chrome 10-25, Safari 5.1-6 */
+            background: linear-gradient(to bottom, #1CB5E0, #000046); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
             background-repeat: no-repeat;
         }
 
@@ -122,7 +119,7 @@ $infusionsoft = new \Infusionsoft\Infusionsoft(array(
                     <label for="redirectURI">Redirect URI</label>
                     <input type="text" class="form-control" id="redirectURI" name="redirectURI" placeholder="Redirect URI" required>
                   </div>
-                  <input type="submit" name="infuseSubmit" value="Install API SDK">
+                  <input type="submit" name="infuseSubmit" class="btn btn-success" value="Install API SDK">
               </form>
           </div>
       </div>

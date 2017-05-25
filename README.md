@@ -1,4 +1,4 @@
-# infuse-installer
+# infusionsoft-sdk-installer
 Used to install the new Infusionsoft PHP SDK and set up application keys. I build this mainly as practice for new developers at our company so they can quickly get up and running with the PHP SDK from Infusionsoft. It is helpful to bridge the gap to newcomers to Composer and working in CLI.
 
 # Note

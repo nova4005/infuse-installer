@@ -3,6 +3,8 @@
  * The script will pull and install the Infusionsoft SDK into this directory.
  *
  */
+require_once 'mysql-db.php';
+
 if(array_key_exists('clientKey', $_POST)) {
     //Get Zip
     $isSDK = 'https://github.com/infusionsoft/infusionsoft-php/archive/master.zip';
@@ -32,6 +34,20 @@ if(array_key_exists('clientKey', $_POST)) {
         }
     }
 
+
+
+    /**
+     * Generate the starter MySQL connection for use in storing and accessing access tokens
+     */
+    $dbName = filter_var($_POST['dbname'], FILTER_SANITIZE_STRING);
+    $username = filter_var($_POST['username'], FILTER_SANITIZE_STRING);
+    $password = filter_var($_POST['password'], FILTER_SANITIZE_STRING);
+    $myConnection = new MySQL_DB($dbName, $username, $password);
+    $connectData = $myConnection->generate_connection();
+
+
+
+
     //Write the Infusionsoft Application settings to the config file
     $configWrite = fopen('app-config.php', 'w');
     $data = '<?php
@@ -39,7 +55,12 @@ $infusionsoft = new \Infusionsoft\Infusionsoft(array(
     "clientId" => "' . filter_var($_POST['clientKey'], FILTER_SANITIZE_STRING) . '",
     "clientSecret" => "' . filter_var($_POST['clientSecret'], FILTER_SANITIZE_STRING) . '",
     "redirectUri" => "' . filter_var($_POST['redirectURI'], FILTER_SANITIZE_URL) . '",
-)); ?>';
+));';
+
+    if($connectData) {
+        $data .= "\r\n\r\n";
+        $data .= '$connect = ' . $connectData;
+    }
     fwrite($configWrite, $data);
     fclose($configWrite);
 
@@ -47,6 +68,7 @@ $infusionsoft = new \Infusionsoft\Infusionsoft(array(
     chdir("./" . $dir);
     $phpDir = PHP_BINDIR . "/php";
     exec("$phpDir ../composer.phar install", $out, $ret);
+
 }
 
 
@@ -93,13 +115,18 @@ $infusionsoft = new \Infusionsoft\Infusionsoft(array(
   </head>
   <body>
       <?php
-      if(array_key_exists('clientKey', $_POST)) {
+      if(isset($ret) && $ret == 0 && array_key_exists('clientKey', $_POST)) {
           echo '<div class="container"><div class="row">';
           echo '<h2>Installation complete</h2>';
           echo '<p>Please find your installed SDK in the folder named ' . $dir . '. There is also a filed name app-config.php that has your application settings installed in the file and assigned to the $infusionsoft variable. This file can be stored above the web directory and included in script files when needing to access the API.</p>';
           echo '</div></div>';
 
           exit;
+      } else if(array_key_exists('clientKey', $_POST) && isset($ret) && $ret != 0) {
+          echo '<div class="container"><div class="row">';
+          echo '<h2>Installation Error</h2>';
+          echo '<p>There was an error executing the composer installation of vendor packages. Please check the files that were created and rerun installation if corrupt or missing. If problem persists check to make sure PHP exec() is enabled.</p>';
+          echo '</div></div>';
       }
       ?>
 
@@ -118,6 +145,19 @@ $infusionsoft = new \Infusionsoft\Infusionsoft(array(
                   <div class="form-group">
                     <label for="redirectURI">Redirect URI</label>
                     <input type="text" class="form-control" id="redirectURI" name="redirectURI" placeholder="Redirect URI" required>
+                  </div>
+                  <h2>MySQL Connection Information</h2>
+                  <div class="form-group">
+                    <label for="dbname">Database Name</label>
+                    <input type="text" class="form-control" id="dbname" name="dbname" placeholder="Database Name">
+                  </div>
+                  <div class="form-group">
+                    <label for="username">User Name</label>
+                    <input type="text" class="form-control" id="username" name="username" placeholder="User Name">
+                  </div>
+                  <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Password">
                   </div>
                   <input type="submit" name="infuseSubmit" class="btn btn-success" value="Install API SDK">
               </form>

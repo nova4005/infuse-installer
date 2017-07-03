@@ -42,8 +42,8 @@ if(array_key_exists('clientKey', $_POST)) {
     $dbName = filter_var($_POST['dbname'], FILTER_SANITIZE_STRING);
     $username = filter_var($_POST['username'], FILTER_SANITIZE_STRING);
     $password = filter_var($_POST['password'], FILTER_SANITIZE_STRING);
-    $myConnection = new MySQL_DB($dbName, $username, $password);
-    $connectData = $myConnection->generate_connection();
+    // $myConnection = new MySQL_DB($dbName, $username, $password);
+    // $connectData = $myConnection->generate_connection();
 
 
 
@@ -57,10 +57,12 @@ $infusionsoft = new \Infusionsoft\Infusionsoft(array(
     "redirectUri" => "' . filter_var($_POST['redirectURI'], FILTER_SANITIZE_URL) . '",
 ));';
 
-    if($connectData) {
+    // if($connectData) {
         $data .= "\r\n\r\n";
-        $data .= '$connect = ' . $connectData;
-    }
+        $data .= '$dbName = "' . $dbName . "\";\r\n";
+        $data .= '$dbUserName = "' . $username . "\";\r\n";
+        $data .= '$dbPassword = "' . $password . "\";\r\n";
+    // }
     fwrite($configWrite, $data);
     fclose($configWrite);
 
@@ -111,6 +113,10 @@ $infusionsoft = new \Infusionsoft\Infusionsoft(array(
             flex: 1;
             padding: 20px;
         }
+
+        .pad {
+            padding-left: 20px;
+        }
     </style>
   </head>
   <body>
@@ -119,6 +125,7 @@ $infusionsoft = new \Infusionsoft\Infusionsoft(array(
           echo '<div class="container"><div class="row">';
           echo '<h2>Installation complete</h2>';
           echo '<p>Please find your installed SDK in the folder named ' . $dir . '. There is also a filed name app-config.php that has your application settings installed in the file and assigned to the $infusionsoft variable. This file can be stored above the web directory and included in script files when needing to access the API.</p>';
+          echo '<p>If this is going to be a backend or development installation and you connected with a database on the previous screen you can go ahead and authorize the API development account with your Infusionsoft Application using this <a href="/is-authorize.php">Link</a>.</p>';
           echo '</div></div>';
 
           exit;
@@ -144,9 +151,26 @@ $infusionsoft = new \Infusionsoft\Infusionsoft(array(
                   </div>
                   <div class="form-group">
                     <label for="redirectURI">Redirect URI</label>
+                    <p>If you would like to set this up and do some API testing and you want to authorize the application and save the access tokens to the database, you can simply but in the redirect URL to go to the is-authorize.php file in this directory.</p>
                     <input type="text" class="form-control" id="redirectURI" name="redirectURI" placeholder="Redirect URI" required>
                   </div>
                   <h2>MySQL Connection Information</h2>
+                  <p>For the database structure if you want to set this up and authorize on the next screen. Please go ahead and create the database and table with the following structure.</p>
+                  <dl>
+                      <dt>Database Name</dt>
+                      <dd>Any Name</dd>
+                      <dt>Table Name</dt>
+                      <dd>admin_tokens</dd>
+                      <dt>Table Structure</dt>
+                      <dd>
+                          <dl class="pad">
+                              <dt>id</dt>
+                              <dd>primary key, auto-increment</dd>
+                              <dt>is_access_token</dt>
+                              <dd>TEXT</dd>
+                          </dl>
+                      </dd>
+                  </dl>
                   <div class="form-group">
                     <label for="dbname">Database Name</label>
                     <input type="text" class="form-control" id="dbname" name="dbname" placeholder="Database Name">

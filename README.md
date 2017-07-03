@@ -8,9 +8,9 @@ To use this install script you need the composer.phar file from getcomposer.org.
 
 PHP, curl, and exec() needs to be enabled for this to work successfully.
 
-# Planned Additions
+# MySQL Connection information
 
-I am currently thinking of adding in some basic MySQL database connection setup to the app-config.php to help get started with storing the Infusionsoft Token object after oAuth authentication is complete. This will help to get up and running with a permanent storage engine quickly.
+I am currently adding in the ability to generate your MySQL connection string in the config file. I am going to add the storing and access functions to this so it will be easier to refresh tokens and update the value in the database.
 
 # After Installation
 

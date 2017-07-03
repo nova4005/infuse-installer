@@ -1,24 +1,21 @@
 <?php
 
-class MySQL_DB {
-
-
-    function __construct($databaseName, $username, $password) {
+class MySQL_DB
+{
+    public function __construct($databaseName, $username, $password)
+    {
         $this->db = $databaseName;
         $this->username = $username;
         $this->password = $password;
     }
 
-
-    // public function generate_connection() {
-    //     return "mysqli_connect('localhost', '$this->username', '$this->password', '$this->db')";
-    // }
-
-    public function connect() {
+    public function connect()
+    {
         return mysqli_connect('localhost', $this->username, $this->password, $this->db);
     }
 
-    public function retrieve() {
+    public function retrieve()
+    {
         $link = $this->connect();
 
         $query = "SELECT is_access_token FROM `admin_tokens` WHERE ID = 1 LIMIT 1";
@@ -26,13 +23,13 @@ class MySQL_DB {
         $stmt = $link->prepare($query);
 
         if ($stmt) {
-    	    $stmt->execute();
+            $stmt->execute();
 
             $result = $stmt->get_result();
 
             $stmt->close();
 
-            if($result) {
+            if ($result) {
                 return $result->fetch_array(MYSQLI_NUM);
             }
 
@@ -41,10 +38,10 @@ class MySQL_DB {
         }
 
         mysqli_close($link);
-
     }
 
-    public function store($token) {
+    public function store($token)
+    {
         $link = $this->connect();
 
         $query = "INSERT INTO `admin_tokens` (id, is_access_token) VALUES(1, ?) ON DUPLICATE KEY UPDATE is_access_token = VALUES(is_access_token)";

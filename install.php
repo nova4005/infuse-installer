@@ -27,8 +27,6 @@ if(array_key_exists('clientKey', $_POST)) {
             $zip->extractTo('.');
             $dir = trim($zip->getNameIndex(0), '/'); //Get Folder Name
             $zip->close();
-            // echo 'Folder Name: ' . $dir . '<br>';
-            // echo 'woot!';
         } else {
             // echo 'doh!';
         }
@@ -42,11 +40,6 @@ if(array_key_exists('clientKey', $_POST)) {
     $dbName = filter_var($_POST['dbname'], FILTER_SANITIZE_STRING);
     $username = filter_var($_POST['username'], FILTER_SANITIZE_STRING);
     $password = filter_var($_POST['password'], FILTER_SANITIZE_STRING);
-    // $myConnection = new MySQL_DB($dbName, $username, $password);
-    // $connectData = $myConnection->generate_connection();
-
-
-
 
     //Write the Infusionsoft Application settings to the config file
     $configWrite = fopen('app-config.php', 'w');
@@ -57,12 +50,11 @@ $infusionsoft = new \Infusionsoft\Infusionsoft(array(
     "redirectUri" => "' . filter_var($_POST['redirectURI'], FILTER_SANITIZE_URL) . '",
 ));';
 
-    // if($connectData) {
-        $data .= "\r\n\r\n";
-        $data .= '$dbName = "' . $dbName . "\";\r\n";
-        $data .= '$dbUserName = "' . $username . "\";\r\n";
-        $data .= '$dbPassword = "' . $password . "\";\r\n";
-    // }
+    $data .= "\r\n\r\n";
+    $data .= '$dbName = "' . $dbName . "\";\r\n";
+    $data .= '$dbUserName = "' . $username . "\";\r\n";
+    $data .= '$dbPassword = "' . $password . "\";\r\n";
+
     fwrite($configWrite, $data);
     fclose($configWrite);
 
